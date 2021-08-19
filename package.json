@@ -1,0 +1,22 @@
+{
+  "name": "cat1",
+  "version": "1.0.0",
+  "description": "机器人1",
+  "main": "index.js",
+  "author": "猫黑",
+  "license": "MIT",
+  "devDependencies": {
+    "koishi": "^3.13.1",
+    "koishi-adapter-onebot": "^3.1.0",
+    "koishi-plugin-common": "^4.3.3",
+    "node-schedule": "^2.0.0"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "cheerio": "^1.0.0-rc.5",
+    "koishi-adapter-onebot": "^3.1.0",
+    "koishi-plugin-common": "^4.3.3",
+    "koishi-plugin-schedule": "^3.0.6",
+    "koishi-plugin-webui": "^4.6.3"
+  }
+}
