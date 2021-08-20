@@ -11,7 +11,6 @@ function scrape() {
     const page = await browser.newPage();
     // 跳转到指定页面
     await page.goto('https://ff.web.sdo.com/web8/index.html#/newstab/newslist');
-    console.log(page.url());
     await page.waitForSelector('[class="nitemlick"]');
     let data = await page.$eval('[class="nitemlick"]', el => {
       const img = el.querySelector('div.npic > img').src;
@@ -42,10 +41,9 @@ const botSendByFFWeb = async (bot) => {
     if (data.time === time.toString()) return;
     fs.writeFileSync(`FFWeb.txt`, data.time);
     let str_ = "----------"
-    bot.sendMessage("635246373", `【FF14 国服官网最新新闻】\n${str_}\n${data.title}\n\n${data.content}` + s('image', { url: data.img }) + `日期：${data.time}  \n链接：见鲨鲨bot的下一条消息`);
-    setTimeout(() => {bot.sendMessage("635246373", data.url)}, 2000)
+    bot.sendMessage("815465250", `【FF14 国服官网最新新闻】\n${str_}\n${data.title}\n\n${data.content}` + s('image', { url: data.img }) + `日期：${data.time}  \n链接：${data.url}`);
 } catch (err) {
-    console.log(err);
+    console.log("出错啦！！！", err);
   }
 }
 
@@ -53,9 +51,9 @@ const botSendByFFWeb = async (bot) => {
 module.exports = async (ctx) => {
   const bot = ctx.bots[0];
   console.log("|----FF14官网订阅任务启动----|");
-  nodeSchedule.scheduleJob("0 30 * * * *", () => {
+  // nodeSchedule.scheduleJob("0 30 * * * *", () => {
     console.log("准备获取FF14官网新闻");
     botSendByFFWeb(bot);
-  })
+  // })
 }
 
