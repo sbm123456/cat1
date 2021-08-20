@@ -26,5 +26,6 @@ app.plugin(require('koishi-plugin-common'), {
 // app.plugin(require('koishi-plugin-webui'))
 app.plugin(require('./plugins/my-plugin'))
 app.plugin(require('./plugins/ff14'))
+app.plugin(require('./plugins/subscribe'))
 // 启动应用
 app.start()

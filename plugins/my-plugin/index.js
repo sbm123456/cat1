@@ -6,6 +6,7 @@ const { readFile } = require('fs/promises')
 module.exports = (ctx, bot) => {
   ctx.middleware(async (session, next) => {
     const { userId, content } = session;
+    // console.log(content);
     if (userId === '1323437072') {
       const op = content.match(/\[(.+?)\]/g);
       const oq = content.match(/(运势：)(\S*)%/);

@@ -1,6 +1,3 @@
-const {
-  Bot
-} = require('koishi-core')
 const nodeSchedule = require("node-schedule");
 
 module.exports = async (ctx) => {

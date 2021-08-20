@@ -21,6 +21,7 @@ node .
 /抽卡 （抽占星卡）
 /刮刮乐 仙人微彩计算器网站
 
+/官网新闻订阅
 /微博订阅
 /节假日问候 （待做）
 
@@ -37,5 +38,8 @@ const nodeSchedule = require("node-schedule");
 nodeSchedule.scheduleJob("0 0 8 * * *", () => {
   bot.sendMessage("635246373", "/占卜");
 })
+
+//Puppeteer 是一个提供一系列高级接口通过 DevTools（开发者工具）协议去控制 Chrome 或者 Chromium（谷歌开源）的 Node 库。
+cnpm i puppeteer -D
 ```
 
