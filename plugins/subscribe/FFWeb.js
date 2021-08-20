@@ -5,6 +5,7 @@ const fs = require("fs");
 
 function scrape() {
   return new Promise(async (resolve, reject) => {
+    console.log("准备获取FF14官网新闻");
     // 初始化无头浏览器
     const browser = await puppeteer.launch();
     // 新建页面
@@ -37,9 +38,9 @@ function scrape() {
 const botSendByFFWeb = async (bot) => {
   try {
     const data = await scrape();
-    const time = fs.readFileSync('FFWeb.txt');
-    if (data.time === time.toString()) return;
-    fs.writeFileSync(`FFWeb.txt`, data.time);
+    const title = fs.readFileSync('FFWeb.txt');
+    if (data.title === title.toString()) return;
+    fs.writeFileSync(`FFWeb.txt`, data.title);
     let str_ = "----------"
     bot.sendMessage("815465250", `【FF14 国服官网最新新闻】\n${str_}\n${data.title}\n\n${data.content}` + s('image', { url: data.img }) + `日期：${data.time}  \n链接：${data.url}`);
 } catch (err) {
@@ -51,9 +52,8 @@ const botSendByFFWeb = async (bot) => {
 module.exports = async (ctx) => {
   const bot = ctx.bots[0];
   console.log("|----FF14官网订阅任务启动----|");
-  // nodeSchedule.scheduleJob("0 30 * * * *", () => {
-    console.log("准备获取FF14官网新闻");
+  nodeSchedule.scheduleJob("0 30 * * * *", () => {
     botSendByFFWeb(bot);
-  // })
+  })
 }
 

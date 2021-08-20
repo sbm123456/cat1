@@ -6,13 +6,13 @@ const {
 require('koishi-adapter-onebot')
 
 const app = new App({
-  port: 8080,
+  port: 8090,
   // 这部分与上面的配置文件作用基本相同
   type: 'onebot:http',
   // 对应 cqhttp 配置项 http_config.port
   server: 'http://127.0.0.1:5700',
   type: 'onebot:http',
-  selfId: '1323437072',
+  selfId: '2714324034',
   secret: 'my-secret',
   minSimilarity: 0,
   nickname: '鲨鲨'
