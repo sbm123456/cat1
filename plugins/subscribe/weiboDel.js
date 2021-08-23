@@ -1,14 +1,18 @@
 const fs = require("fs");
-const { s, Random } = require('koishi-core')
+const {
+  s,
+  Random
+} = require('koishi-core')
 module.exports = async (text) => {
   const nametext = text.args[0];
+  const groupId = text.session.groupId;
   const userId = text.session.author.userId;
   try {
     // const str = content.session.content;
-    if (!nametext) return;
+    if (!nametext || !groupId) return;
     let list = JSON.parse(fs.readFileSync('store/hotSearch.json'));
-    if (list[nametext]) { // 如果搜索到重复的
-      list[nametext].userId = list[nametext].userId.filter(item => item !== userId);
+    if (list[nametext] && list[nametext].userId.includes(groupId)) { // 如果搜索到重复的
+      list[nametext].userId = list[nametext].userId.filter(item => item !== groupId);
       await fs.writeFileSync(
         `store/hotSearch.json`,
         JSON.stringify(list),

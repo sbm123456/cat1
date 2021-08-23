@@ -30,12 +30,12 @@ function scrape(name) {
 
 module.exports = async (text) => {
   const nametext = text.args[0];
-  const groupId = text.session.groupId;
+  const groupId = text?.session?.groupId;
   const userId = text.session.author.userId;
   try {
     console.log("开始订阅", nametext)
     // const str = content.session.content;
-    if (!nametext) return;
+    if (!nametext || !groupId) return;
     const data = await scrape(nametext);
     const list = JSON.parse(fs.readFileSync('store/hotSearch.json'));
     if (list[data.name]) { // 如果搜索到重复的
