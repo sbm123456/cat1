@@ -11,8 +11,11 @@ module.exports = async (text) => {
     // const str = content.session.content;
     if (!nametext || !groupId) return;
     let list = JSON.parse(fs.readFileSync('store/hotSearch.json'));
-    if (list[nametext] && list[nametext].userId.includes(groupId)) { // 如果搜索到重复的
+    if (nametext in list && list[nametext].userId.includes(groupId)) { // 如果搜索到重复的
       list[nametext].userId = list[nametext].userId.filter(item => item !== groupId);
+      if (list[nametext].userId.length === 0) {
+        delete list[nametext];
+      }
       await fs.writeFileSync(
         `store/hotSearch.json`,
         JSON.stringify(list),

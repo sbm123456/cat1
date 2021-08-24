@@ -5,12 +5,8 @@ const {
 } = require('koishi-core')
 const fs = require("fs");
 
-const scrape = (lastTime, url) => {
+const scrape = (lastTime, url, page) => {
   return new Promise(async (resolve, reject) => {
-    // 初始化无头浏览器
-    const browser = await puppeteer.launch();
-    // 新建页面
-    const page = await browser.newPage();
     // 跳转到指定页面
     await page.goto(url);
     // 获取tr，并且循环
@@ -40,7 +36,6 @@ const scrape = (lastTime, url) => {
       const base64 = await detail[index].screenshot({
         encoding: "base64"
       })
-      browser.close();
       base64 ? resolve({
         base64,
         time: data[index].time,
@@ -52,11 +47,15 @@ const scrape = (lastTime, url) => {
 
 const botSendByWeiBo = async (bot) => {
   try {
+    // 初始化无头浏览器
+    const browser = await puppeteer.launch();
+    // 新建页面
+    const page = await browser.newPage();
     const list = JSON.parse(fs.readFileSync('store/hotSearch.json'))
     const values = Object.values(list);
-    for(let i = 0, len = values.length; i < len; ++i ){
+    for (let i = 0, len = values.length; i < len; ++i) {
       console.log(`开始爬取${values[i].name}`)
-      const op = await scrape(values[i].time, values[i].url);
+      const op = await scrape(values[i].time, values[i].url, page);
       if (!op.time) continue;
       values[i].userId.forEach(el => {
         bot.sendMessage(el, `微博订阅推送--${op.time}` + s("image", {
@@ -70,6 +69,7 @@ const botSendByWeiBo = async (bot) => {
       JSON.stringify(list),
       "utf-8"
     );
+    browser.close();
   } catch (err) {
     console.log(err);
   }
@@ -79,7 +79,7 @@ const botSendByWeiBo = async (bot) => {
 module.exports = async (ctx) => {
   const bot = ctx.bots[0];
   const rule = new nodeSchedule.RecurrenceRule();
-  rule.minute = [0,10,20,30,40,50];
+  rule.minute = [0, 10, 20, 30, 40, 50];
   nodeSchedule.scheduleJob(rule, () => {
     // setInterval(() => botSendByWeiBo(bot), 1000*60*5);
     botSendByWeiBo(bot)
