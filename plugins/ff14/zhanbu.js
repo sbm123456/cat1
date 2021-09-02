@@ -52,7 +52,7 @@ const days = async (bot) => {
   })
 
   cardIcon = await readFile(`./plugins/ff14/assets/shasha/${shasha}.jpg`);
-  bot.sendMessage("635246373", str + s('image', { url: `base64://${cardIcon.toString('base64')}` }) + str1);
+  bot.sendMessage("815465250", str + s('image', { url: `base64://${cardIcon.toString('base64')}` }) + str1);
 }
 module.exports = async (ctx) => {
   const bot = ctx.bots[0];

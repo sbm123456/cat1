@@ -3,13 +3,9 @@ const puppeteer = require('puppeteer');
 const { s } = require('koishi-core')
 const fs = require("fs");
 
-function scrape() {
+function scrape(page, browser) {
   return new Promise(async (resolve, reject) => {
     console.log("准备获取FF14官网新闻");
-    // 初始化无头浏览器
-    const browser = await puppeteer.launch();
-    // 新建页面
-    const page = await browser.newPage();
     // 跳转到指定页面
     await page.goto('https://ff.web.sdo.com/web8/index.html#/newstab/newslist');
     await page.waitForSelector('[class="nitemlick"]');
@@ -31,19 +27,42 @@ function scrape() {
     const newPage = await newPagePromise;
     const url = newPage.url();
     data['url'] = url;
-    browser.close();
     data ? resolve(data) : reject("errer");
   });
 }
 const botSendByFFWeb = async (bot) => {
+  let browser;
   try {
-    const data = await scrape();
+    browser = await puppeteer.launch();
+    // 新建页面
+    const page = await browser.newPage();
+    const data = await scrape(page, browser);
     const title = fs.readFileSync('FFWeb.txt');
     if (data.title === title.toString()) return;
     fs.writeFileSync(`FFWeb.txt`, data.title);
-    let str_ = "----------"
-    bot.sendMessage("815465250", `【FF14 国服官网最新新闻】\n${str_}\n${data.title}\n\n${data.content}` + s('image', { url: data.img }) + `日期：${data.time}  \n链接：${data.url}`);
+    let str_ = "----------";
+    await browser?.close();
+    console.log("asds", data.img);
+    bot.$sendGroupForwardMsg("815465250", [
+      {
+        "type": "node",
+        "data": {
+          "name": "鲨鲨播报员",
+          "uin": 2714324034,
+          "content": `【FF14 国服官网最新新闻】\n${str_}\n${data.title}\n\n${data.content}` + `[CQ:image,file=${data.img}]` + `\n日期：${data.time}  \n`
+        }
+      },
+      {
+        "type": "node",
+        "data": {
+          "name": "鲨鲨播报员",
+          "uin": 2714324034,
+          "content": `链接：${data.url}`
+        }
+      }
+    ])
 } catch (err) {
+    browser?.close();
     console.log("出错啦！！！", err);
   }
 }
@@ -52,8 +71,7 @@ const botSendByFFWeb = async (bot) => {
 module.exports = async (ctx) => {
   const bot = ctx.bots[0];
   console.log("|----FF14官网订阅任务启动----|");
-  nodeSchedule.scheduleJob("0 30 * * * *", () => {
+  nodeSchedule.scheduleJob("0 25 * * * *", () => {
     botSendByFFWeb(bot);
   })
 }
-

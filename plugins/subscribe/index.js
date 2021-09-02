@@ -17,7 +17,7 @@ module.exports.apply = (ctx) => {
   .action((text) => weiboDel(text))
 
   ctx.command('subscribe/wb-list', 'weibo订阅列表')
-  .shortcut('订阅列表', { prefix: true })
+  .shortcut('列表', { prefix: true })
   .action(text => wbList(text))
 
   ctx.on("connect", () => {

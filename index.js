@@ -35,5 +35,6 @@ app.plugin(require('koishi-plugin-common'), {
 // app.plugin(require('./plugins/my-plugin'))
 app.plugin(require('./plugins/ff14'))
 app.plugin(require('./plugins/subscribe'))
+// app.plugin(require('./plugins/QQbot'))
 // 启动应用
 app.start()

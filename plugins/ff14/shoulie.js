@@ -11,16 +11,6 @@ function scrape(name = "Moogle") {
     await page.goto(`https://ffxivhunt.cn/${name}.html`);
     await page.waitForSelector('#t');
     const base64 = await page.screenshot({ encoding: "base64" });
-    // let data = {};
-    // let list = await page.$$eval('#t tr', el => el.map(e => {
-    //   const TList = [];
-    //   e.querySelectorAll('td').forEach(td => TList.push(td.innerHTML));
-    //   return TList;
-    // }
-    // ));
-
-    // data["title"] = await page.$eval('p', el => el.innerHTML);
-    // data["list"] = list;
     browser.close();
     base64 ? resolve(base64) : reject("errer");
   });

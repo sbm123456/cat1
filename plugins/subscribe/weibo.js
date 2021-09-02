@@ -11,7 +11,7 @@ const scrape = (lastTime, url, page) => {
     await page.goto(url);
     // 获取tr，并且循环
     await page.waitForSelector('[class="WB_detail"]');
-    await page.waitFor(3000);
+    await page.waitFor(2000);
     let detail = await page.$$('.WB_feed_detail');
     let data = await page.$$eval('[class="WB_detail"]', el => el.map(e => {
       const time = e.querySelector('.S_txt2 > a').title;
@@ -46,31 +46,43 @@ const scrape = (lastTime, url, page) => {
 }
 
 const botSendByWeiBo = async (bot) => {
+  let browser;
   try {
     // 初始化无头浏览器
-    const browser = await puppeteer.launch();
+    browser = await puppeteer.launch();
     // 新建页面
     const page = await browser.newPage();
     const list = JSON.parse(fs.readFileSync('store/hotSearch.json'))
     const values = Object.values(list);
-    for (let i = 0, len = values.length; i < len; ++i) {
+    let obj = {};
+    for(let i = 0, len = values.length; i < len; ++i ){
       console.log(`开始爬取${values[i].name}`)
       const op = await scrape(values[i].time, values[i].url, page);
       if (!op.time) continue;
       values[i].userId.forEach(el => {
-        bot.sendMessage(el, `微博订阅推送--${op.time}` + s("image", {
-          url: `base64://${op.base64}`
-        }) + `如果嫌吵可以退订哦\n链接：${values[i].url}`);
+        if (!obj[el]) obj[el] = [];
+        obj[el].push({
+          "type": "node",
+          "data": {
+            "name": "鲨鲨微博播报员",
+            "uin": 2714324034,
+            "content": `微博订阅推送：\n[CQ:image,file=base64://${op.base64}]\n如果嫌吵可以退订哦\n链接：${values[i].url}`
+          }
+        })
       })
       list[values[i].name].time = op.span;
     };
+    Object.keys(obj).forEach(el => {
+      bot.$sendGroupForwardMsg(el, obj[el]);
+    })
     await fs.writeFileSync(
       `store/hotSearch.json`,
       JSON.stringify(list),
       "utf-8"
     );
-    browser.close();
+    browser?.close();
   } catch (err) {
+    browser?.close();
     console.log(err);
   }
 }
@@ -79,10 +91,10 @@ const botSendByWeiBo = async (bot) => {
 module.exports = async (ctx) => {
   const bot = ctx.bots[0];
   const rule = new nodeSchedule.RecurrenceRule();
-  rule.minute = [0, 10, 20, 30, 40, 50];
+  rule.minute = [0,10,20,30,40,50];
+  console.log("|----微博订阅任务启动----|");
   nodeSchedule.scheduleJob(rule, () => {
     // setInterval(() => botSendByWeiBo(bot), 1000*60*5);
     botSendByWeiBo(bot)
   })
-
 }
