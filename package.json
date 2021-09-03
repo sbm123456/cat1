@@ -6,11 +6,13 @@
   "author": "猫黑",
   "license": "MIT",
   "devDependencies": {
+    "fs-extra": "^10.0.0",
     "koishi": "^3.13.1",
     "koishi-adapter-onebot": "^3.1.0",
     "koishi-plugin-common": "^4.3.3",
     "node-schedule": "^2.0.0",
-    "puppeteer": "^10.2.0"
+    "puppeteer": "^10.2.0",
+    "request": "^2.88.2"
   },
   "dependencies": {
     "axios": "^0.21.1",

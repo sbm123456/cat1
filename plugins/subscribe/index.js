@@ -5,7 +5,7 @@ const weiboDel = require('./weiboDel');
 const wbList = require('./wbList');
 module.exports.name = 'shasha-subscribe'
 module.exports.apply = (ctx) => {
-  ctx.command('subscribe', '订阅功能')
+  ctx.command('subscribe')
   .shortcut('微博订阅', { prefix: true })
 
   ctx.command('subscribe/wb-add', 'weibo订阅')

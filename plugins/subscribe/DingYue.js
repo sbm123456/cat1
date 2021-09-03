@@ -34,14 +34,16 @@ module.exports = async (text) => {
     // 新建页面
     const page = await browser.newPage();
     // const str = content.session.content;
-    if (!nametext || !groupId) return;
+    if (!nametext || !groupId) { await browser?.close(); return;}
     const data = await scrape(nametext, page);
     const list = JSON.parse(fs.readFileSync('store/hotSearch.json'));
     if (Object.keys(list).length >= 30) {
+      await browser?.close();
       return `${s('at', {id: userId})}订阅失败，鲨鲨bot订阅微博数量过多!请联系猫黑 ${s('face', { id: `${Random.int(38, 39)}` })}`;
     }
     if (list[data.name]) { // 如果搜索到重复的
       if (list[data.name].userId.includes(groupId)) {
+        await browser?.close();
         return `${s('at', {id: userId})}该微博已订阅! ${s('face', { id: `${Random.int(38, 39)}` })}`;
       }
       else list[data.name].userId.push(groupId);
@@ -61,4 +63,5 @@ module.exports = async (text) => {
     console.log("失败啦", err);
     return `${s('at', {id: userId})}关注失败! ${s('face', { id: `${Random.int(0, 39)}` })}\n【${nametext}】 有多个搜索结果。`
   }
+  await browser?.close();
 }

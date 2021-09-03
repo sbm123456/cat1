@@ -21,11 +21,12 @@ function scrape(page, browser) {
         time
       }
     })
-    const newPagePromise = new Promise(x => browser.once('targetcreated', target => x(target.page())));//创建newPagePromise对象
+    const newPagePromise = new Promise(x => browser.on('targetcreated', target => x(target.page())));//创建newPagePromise对象
     const news_btn = await page.$('div.nitemlick');
     await news_btn.click();
     const newPage = await newPagePromise;
     const url = newPage.url();
+    await browser?.close();
     data['url'] = url;
     data ? resolve(data) : reject("errer");
   });
@@ -38,11 +39,10 @@ const botSendByFFWeb = async (bot) => {
     const page = await browser.newPage();
     const data = await scrape(page, browser);
     const title = fs.readFileSync('FFWeb.txt');
-    if (data.title === title.toString()) return;
+    if (data.title === title.toString()) { browser?.close(); return; }
     fs.writeFileSync(`FFWeb.txt`, data.title);
     let str_ = "----------";
     await browser?.close();
-    console.log("asds", data.img);
     bot.$sendGroupForwardMsg("815465250", [
       {
         "type": "node",
@@ -62,9 +62,10 @@ const botSendByFFWeb = async (bot) => {
       }
     ])
 } catch (err) {
-    browser?.close();
+   await browser?.close();
     console.log("出错啦！！！", err);
   }
+  await browser?.close();
 }
 
 

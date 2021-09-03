@@ -1,6 +1,6 @@
 const dianzan = require('./dianzan');
 
-module.exports.name = 'shasha-QQBot';
+module.exports.name = 'shasha-QQbot';
 module.exports.apply = (ctx) => {
 
   ctx.on("connect", () => {

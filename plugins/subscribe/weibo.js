@@ -5,13 +5,13 @@ const {
 } = require('koishi-core')
 const fs = require("fs");
 
-const scrape = (lastTime, url, page) => {
+const scrape = (lastTime, url, page, i) => {
   return new Promise(async (resolve, reject) => {
     // 跳转到指定页面
     await page.goto(url);
     // 获取tr，并且循环
     await page.waitForSelector('[class="WB_detail"]');
-    await page.waitFor(2000);
+    await page.waitFor(i === 0 ? 3000 : 2000);
     let detail = await page.$$('.WB_feed_detail');
     let data = await page.$$eval('[class="WB_detail"]', el => el.map(e => {
       const time = e.querySelector('.S_txt2 > a').title;
@@ -57,7 +57,7 @@ const botSendByWeiBo = async (bot) => {
     let obj = {};
     for(let i = 0, len = values.length; i < len; ++i ){
       console.log(`开始爬取${values[i].name}`)
-      const op = await scrape(values[i].time, values[i].url, page);
+      const op = await scrape(values[i].time, values[i].url, page, i);
       if (!op.time) continue;
       values[i].userId.forEach(el => {
         if (!obj[el]) obj[el] = [];
@@ -66,13 +66,22 @@ const botSendByWeiBo = async (bot) => {
           "data": {
             "name": "鲨鲨微博播报员",
             "uin": 2714324034,
-            "content": `微博订阅推送：\n[CQ:image,file=base64://${op.base64}]\n如果嫌吵可以退订哦\n链接：${values[i].url}`
+            "content": `微博订阅推送：\n[CQ:image,file=base64://${op.base64}]\n链接：${values[i].url}`
           }
         })
       })
       list[values[i].name].time = op.span;
     };
+    await browser?.close();
     Object.keys(obj).forEach(el => {
+      obj[el].push({
+        "type": "node",
+        "data": {
+          "name": "猫黑",
+          "uin": 1438828647,
+          "content": `如果刷屏了记得联系我退订哦`
+        }
+      })
       bot.$sendGroupForwardMsg(el, obj[el]);
     })
     await fs.writeFileSync(
@@ -80,11 +89,11 @@ const botSendByWeiBo = async (bot) => {
       JSON.stringify(list),
       "utf-8"
     );
-    browser?.close();
   } catch (err) {
-    browser?.close();
+    await browser?.close();
     console.log(err);
   }
+  await browser?.close();
 }
 
 
